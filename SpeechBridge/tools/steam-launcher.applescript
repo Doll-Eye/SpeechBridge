@@ -18,3 +18,7 @@ end if
 -- it "steam.exe" instead of "wine". (A cmd "start" would do the same but leaves a console
 -- host behind; wscript has no window.) tools/steam.vbs lives at C:\SpeechBridge\steam.vbs.
 do shell script quoted form of cxstart & " --bottle Steam --no-update --no-wait --no-gui 'C:\\windows\\system32\\wscript.exe' 'C:\\SpeechBridge\\steam.vbs' > /dev/null 2>&1 < /dev/null &"
+-- Then give every game its own name in the app switcher (see tools/name-stubs.sh); it waits
+-- for the bottle to be up and runs in the background so this app can quit.
+set stubs to (POSIX path of (path to application support folder from user domain)) & "SpeechBridge/name-stubs.sh"
+do shell script "sh " & quoted form of stubs & " Steam > /dev/null 2>&1 < /dev/null &"

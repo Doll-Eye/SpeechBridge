@@ -204,6 +204,11 @@ if [ -d "$STEAM" ]; then
     fi
 fi
 
+# Names in the app switcher (see tools/name-stubs.sh): the script is kept beside the listener's
+# logs so the Steam launcher can run it, and it runs now in case Steam is already up.
+mkdir -p "$HOME/Library/Application Support/SpeechBridge"; cp "$HERE/tools/name-stubs.sh" "$HOME/Library/Application Support/SpeechBridge/name-stubs.sh"
+sh "$HERE/tools/name-stubs.sh" "$BOTTLE"
+
 if pgrep -x "SpeechBridge Listener" >/dev/null; then
     echo "Listener: running."
 else

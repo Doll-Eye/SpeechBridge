@@ -366,7 +366,17 @@ not want it. `tools/steam-launcher.applescript` (compiled with `osacompile -o
 `cxstart --bottle Steam --no-update --no-wait --no-gui <steam.exe>` from the applet's own
 `do shell script`. Measured: with CrossOver quit, Steam and Big Picture come up in six seconds,
 CrossOver's app never launches, Steam Speak reads the page. The old rule "never from a shell"
-was about a shell without a window-server session (an AI's terminal); an applet has one. **Names in the app switcher:** a program cxstart starts directly runs on the bare Wine
+was about a shell without a window-server session (an AI's terminal); an applet has one. **Game names in the app switcher (30 Sep 2026):** CrossOver runs each Windows program through
+a file named after it in `$TMPDIR/winetemp-…`; macOS names the process from that file. Most
+get a hard link to CrossOver's `wineloader` stub and read as "Hades2.exe"; some — Diablo IV,
+Cyberpunk 2077, programs a launcher spawns, Wine's own notepad/cmd — get a bare symlink to the
+`wine` binary and read as "wine". The rule CrossOver uses is unknown, but measured: **if a stub
+already exists under the exe's name, CrossOver reuses it**, and Diablo then reads
+"Diablo IV.exe". `tools/name-stubs.sh` links a stub for every .exe in the Steam library; the
+Steam launcher runs it after starting Steam (the folder is per boot), install.sh runs it too.
+`.exe` in the name is CrossOver's; there is no lever for that.
+
+**Names in the app switcher (earlier):** a program cxstart starts directly runs on the bare Wine
 binary and the app switcher (and VoiceOver) call it "wine", as they did Steam's Big Picture
 helper. A program started *by another Windows program* gets CrossOver's per-process package
 and its own name. So the launcher starts Steam through the bottle's script host

@@ -113,7 +113,9 @@ A launcher for Steam that a blind user can open from Spotlight is
 the script being `tools/steam.vbs`), so CrossOver's own window never opens, and brings Steam
 forward if it is already running. Going through the script host matters: a program started
 by another Windows program gets CrossOver's per-process package and its own name in the app
-switcher, where one started directly is just "wine". (`open -a CrossOver <exe>`
+switcher, where one started directly is just "wine". The launcher then runs
+`SpeechBridge/tools/name-stubs.sh`, which does the same for every game in the library, so
+Diablo IV or Cyberpunk read as "Diablo IV.exe" in Command-Tab rather than "wine". (`open -a CrossOver <exe>`
 also works but opens CrossOver, and its trial reminder dialog swallows launches while showing.)
 
 ### 2. The listener on the Mac

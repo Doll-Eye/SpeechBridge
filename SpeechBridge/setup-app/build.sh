@@ -16,6 +16,7 @@ for d in SAAPI64 NVDA WindowsTTS SapiBridge SpVoice RenPy BusType ZDSR; do
     cp "$d"/*.exe "$PAYLOAD/$d/" 2>/dev/null || true
 done
 cp install.sh "$PAYLOAD/install.sh"
+mkdir -p "$PAYLOAD/tools"; cp tools/name-stubs.sh "$PAYLOAD/tools/"
 chmod +x "$PAYLOAD/install.sh"
 plutil -replace CFBundleName -string "SpeechBridge Setup" "$APP/Contents/Info.plist"
 plutil -replace CFBundleIdentifier -string "com.doll-eye.speechbridge-setup" "$APP/Contents/Info.plist"
