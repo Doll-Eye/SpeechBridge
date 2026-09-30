@@ -1,0 +1,8 @@
+.DS_Store
+*.o
+*.log
+xcuserdata/
+DerivedData/
+build/
+SpeechBridge/tools/rumble/motion
+SpeechBridge/tools/**/*.exe
