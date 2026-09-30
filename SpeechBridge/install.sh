@@ -115,6 +115,10 @@ if [ "$MODE" = install ]; then
     mkdir -p "$B/drive_c/SpeechBridge" "$S32" "$S64"
     cp "$HERE/SapiBridge/SapiBridge64.dll" "$HERE/SpVoice/SpVoiceBridge64.dll" "$HERE/SAAPI64/SAAPI64.dll" "$HERE/ZDSR/ZDSRAPI_x64.dll" "$S32/"
     cp "$HERE/SapiBridge/SapiBridge32.dll" "$HERE/SpVoice/SpVoiceBridge32.dll" "$HERE/ZDSR/ZDSRAPI.dll" "$S64/"
+    # NVDA's controller client, too, so a game that asks for it without shipping it (Tolk's
+    # NVDA driver, or a game's own LoadLibrary) finds the stand-in on the normal DLL search.
+    cp "$HERE/NVDA/nvdaControllerClient64.dll" "$S32/nvdaControllerClient64.dll"; cp "$HERE/NVDA/nvdaControllerClient64.dll" "$S32/nvdaControllerClient.dll"
+    cp "$HERE/NVDA/nvdaControllerClient32.dll" "$S64/nvdaControllerClient32.dll"; cp "$HERE/NVDA/nvdaControllerClient32.dll" "$S64/nvdaControllerClient.dll"
     # Programs built on the Prism speech library (Fallout 4 Access) reach the ZDSR stand-in only
     # when ZDSR's registry key exists; a one-off, checked here.
     if grep -q 'zhiduo\\\\zdsr\]' "$B/system.reg" 2>/dev/null; then

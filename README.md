@@ -11,6 +11,31 @@ blind Mac user who wants to play, and an AI or engineer picking up the same prob
 first group should read "What you need" and "Install"; the second should also read "Traps"
 and the engineering logs linked at the end.
 
+## Quick start
+
+You need an Apple-silicon Mac, [CrossOver](https://www.codeweavers.com/crossover) with a
+bottle called **Steam** holding Windows Steam (see "Install", step 1, for the three settings
+that matter), and Apple's Command Line Tools (the installer asks for them if they are missing).
+Then, in Terminal:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Doll-Eye/SpeechBridge/main/get.sh | sh
+```
+
+That fetches this repository into `~/SpeechBridge`, builds the two Mac apps with Apple's own
+tools (no Xcode, no Homebrew), installs every stand-in into the bottle, does the one-off
+registrations inside it, and leaves three apps in Applications: **SpeechBridge Listener**
+(speaks; allow it to control VoiceOver when asked), **Steam Speak** (reads Big Picture) and
+**Steam** (starts the bottle's Steam without CrossOver's window). After installing a game,
+open **SpeechBridge Setup** once. Run the same line again any time to update.
+
+**It is game-agnostic.** Nothing here is written for one game: the stand-ins answer the
+speech interfaces games and their mods use — Microsoft SAPI, Tolk, NVDA's controller client,
+Prism, the UAP `WindowsTTS` plugin, Ren'Py's external voice — so anything that talks to one
+of those talks through VoiceOver. What is per game is only whether the game ships its own
+copy of such a DLL (the Setup app swaps those) and the mods themselves, which the sections
+below cover for the games tried so far.
+
 ## What plays today
 
 | Game | Speech route | Notes |

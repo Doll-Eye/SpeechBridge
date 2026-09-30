@@ -375,6 +375,22 @@ and the Big Picture `steamwebhelper.exe` are packaged and named, no "wine" in th
 and no console host (a `cmd /c start` did the same but left `conhost.exe` in the switcher). CrossOver's own game launchers (`~/Applications/CrossOver/Steam/*.app`, made
 by cxmenu from the Start Menu) go through its "Menu Helper".
 
+## One-shot install for other people (30 Sep 2026)
+
+The public repository's root `install.sh` (`tools/root-install.sh` here, copied out by
+`tools/publish.sh` together with `tools/get.sh`) does the whole job on a fresh Mac with only
+Apple's Command Line Tools: builds the listener and Steam Speak with `swiftc` (Steam Speak's
+`build-lite.sh` — no Xcode), compiles the two applets and the Setup app, runs this folder's
+`install.sh`, then performs the in-bottle registrations itself with `cxstart` (regsvr32 ×4,
+the ZDSR key, the cfgmgr32 override, the Ren'Py registry file). Measured: `cxstart` returns
+normally from the owner's own Terminal (8 s for `cmd /c exit`); the old "never from a shell"
+rule was about an AI tool's sandboxed shell. `get.sh` is the `curl | sh` line that fetches
+the tarball into `~/SpeechBridge` and runs it. Not yet run end to end on this Mac — each part
+was, and the full run would rebuild the owner's Steam Speak under an ad-hoc signature and
+re-prompt its VoiceOver permission. Game-agnostic since the same day: the NVDA controller
+stand-in also lives in system32/syswow64 under both names, so a game that asks for it
+without shipping it finds it.
+
 ## Protocol
 
     S <utf-8 text>\n   speak (newlines in the text are folded to spaces)
