@@ -12,8 +12,8 @@ listener app of its own that spoke through VoiceOver, and a second app, Steam Sp
 took both jobs in October 2026, and those two apps are retired (their sources stay here, in `SpeechBridge/listener`
 and `Steam Speak`). Built by a blind developer and an AI; it is written for both.
 
-Two readers: a blind Mac user who wants to play should read the guide, **Windows games on your Mac**
-([TurnOver's guides](https://github.com/TurnOver-For-Mac/turnover/blob/main/Guides/14-windows-games.md)), which has the steps in order and each game's mods. An engineer or AI picking
+Two readers: a blind Mac user who wants to play should read the guide, **[Windows games on your Mac, without
+sight](GUIDE.md)**, which has the steps in order and each game's mods. An engineer or AI picking
 the problem up should read this file and then [SpeechBridge/README.md](SpeechBridge/README.md), the engineering log:
 what was measured, what failed and why, with dates.
 

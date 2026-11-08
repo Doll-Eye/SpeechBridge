@@ -124,6 +124,6 @@ Next:
      files are swapped for the stand-ins and its mod loader is allowed. Again after any Steam "verify integrity".
   3. Start the game. The first time it speaks, TurnOver asks whether it may speak for it: Allow. From then on the game
      speaks in TurnOver's voice whenever it is the app in front.
-TurnOver's guide "Windows games on your Mac" (github.com/TurnOver-For-Mac/turnover, Guides/14-windows-games.md) has each
+The guide "Windows games on your Mac, without sight" (GUIDE.md in this repository) has each
 game's mods and settings; README.md beside this script has the detail and the traps.
 TXT
