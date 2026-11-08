@@ -1,8 +1,9 @@
 # SpeechBridge: Windows games speaking through TurnOver
 
 Windows games run on an Apple-silicon Mac through Wine (CrossOver's), and their speech, and the speech of the
-Windows accessibility mods made for them, is caught by small stand-in Windows DLLs and sent to TurnOver, which says it
-in its own voice. Steam's Big Picture, which no Mac screen reader could read, TurnOver reads itself.
+Windows accessibility mods made for them, is caught by small stand-in Windows DLLs and sent to the Mac's screen
+reader: TurnOver, which says it in its own voice, or VoiceOver through a small listener app. Steam's Big Picture,
+which no Mac screen reader could read, TurnOver reads itself; see "TurnOver or VoiceOver" below for what each gives.
 
 This repository is the Windows side of that: the stand-in DLLs with their sources, the installers that put them in
 place, a Setup app, and the notes. The Mac side is [TurnOver](https://github.com/TurnOver-For-Mac/turnover), a screen reader for the Mac
@@ -80,6 +81,23 @@ DLL** where each of those is looked for. Each stand-in does nothing but send the
 out which program is on the other end from the Mac's own record of processes, asks you once whether that program may
 speak through it, and from then on says its lines in TurnOver's voice while the game is the app in front. No screen
 reader for Windows is installed, and nothing in the game needs one.
+
+## TurnOver or VoiceOver
+
+The stand-ins send words to a port on the Mac; what speaks them is up to you. The two choices are not equal:
+
+| | TurnOver | VoiceOver (with the listener) |
+|---|---|---|
+| The games' own speech and their mods | yes | yes |
+| Steam itself (Big Picture: library, store, installing, settings) | yes, read as you move | no; Steam Speak did this and is retired |
+| Cutting speech off when the game moves on | yes: `X` stops TurnOver's voice at once | no: VoiceOver queues what it is given; the listener drops lines older than 1.5 s instead |
+| Who may speak | TurnOver names the program and asks you once, per game; only while it is in front | anything on this Mac that connects to the port is spoken |
+| Setting up | nothing to build; TurnOver listens whenever it runs | build the listener with Apple's Command Line Tools, allow it to control VoiceOver once, keep it running as a login item |
+| Running both at once | one or the other: both want the same port | |
+
+So with TurnOver the whole thing works without sight, from installing a game to playing it. With VoiceOver the games
+speak but Steam does not, so installing and starting a game needs sighted help or the Mac's own Steam windows, which
+VoiceOver reads badly.
 
 ## What you need
 
@@ -202,7 +220,8 @@ have; the registration writes it.
 
 ### Without TurnOver: VoiceOver and the listener
 
-`SpeechBridge/listener/` is the Mac app of September 2026 that speaks the same lines through VoiceOver (or the system voice).
+"TurnOver or VoiceOver", above, says what the difference is. `SpeechBridge/listener/` is the Mac app of September
+2026 that speaks the same lines through VoiceOver (or the system voice).
 `SpeechBridge/listener/build.sh` builds it (Apple's Command Line Tools needed), `SpeechBridge/listener/login-item.sh install` keeps it running.
 The games then speak, but Steam itself does not: Big Picture needs TurnOver (or Steam Speak, retired; its source is in
 `Steam Speak/`, built with Xcode). It is kept for anyone who wants the games with VoiceOver alone; it and TurnOver
