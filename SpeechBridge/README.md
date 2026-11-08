@@ -420,3 +420,45 @@ without shipping it finds it.
 
 Fold the listener into Muteny (Keel's Announcer, opened when a game surface is on
 screen) and let Cross on the CrossOver stub for Diablo IV be the whole launch.
+
+## NotProton and TurnOver (October 2026)
+
+Since 8 October 2026 the Mac side of this project lives inside **TurnOver**: it listens on port 52134, reads Big
+Picture over port 8080 and Electron games over 9223, and speaks with its own voice. SpeechBridge Listener and Steam
+Speak are retired (their launch agent and login item removed, the apps deleted on 9 October). What remains of
+SpeechBridge is the stand-ins and the Setup app.
+
+Games now run through **NotProton** (Steam Play in the Mac Steam client, with CrossOver 26.3 as the runner) rather
+than the CrossOver bottle; each gets a Wine prefix at `steamapps/compatdata/<appid>/pfx`. Opening **SpeechBridge
+Setup** (in Applications) runs `install-notproton.sh`, which for every game Steam has set to NotProton:
+
+- makes a prefix from the template (`~/Library/Application Support/SpeechBridge/template-pfx`, a copy of the
+  CrossOver bottle without its games) if the game has none yet, keeping any Steam Cloud files already there; on a
+  Mac without the template, the game is started once so NotProton makes the prefix, and Setup runs again;
+- puts the stand-ins into the prefix's `system32`/`syswow64` and registers them (SAPI voice, SpVoice, ZDSR for
+  Prism, the Ren'Py voice command), with NotProton's own Wine (`runners/current`) and that prefix's `WINEPREFIX`;
+- replaces the speech DLLs a game ships (NVDA's controller client, WindowsTTS, SAAPI64 beside Tolk) with the
+  stand-ins, originals kept as `.orig`;
+- sets the Wine overrides the mod loaders need (Hades II `d3d12`, Final Fantasy VI `version`, Cyberpunk 2077
+  `winmm`, Fallout 4's XAudio2 set) and F4SE in Fallout 4's launcher's place;
+- sets the launch options for Stardew Valley (SMAPI, as `bash -c 'exec "${@/Stardew Valley.exe/StardewModdingAPI.exe}"' -- %command%`,
+  since NotProton hands the game's path to a shell) and Periphery Synthetic (port 9223), which needs Steam closed:
+  if Steam is open it says so and leaves them for the next run;
+- reports whether TurnOver is listening on port 52134.
+
+It skips a game that is running and says so. The bottle installer (`install.sh`) still runs after it if a bottle
+called Steam exists.
+
+**Diablo IV under NotProton, verified 7 November 2026:** the same hook as in the bottle, and nothing else: `SAAPI64.dll`
+and `SpVoiceBridge64.dll` in the prefix's `windows/system32` (never the game folder; the protection layer ends the
+game two minutes after a DLL loads from there), the SAPI token registered, `UseThirdPartyReader "1"` in
+`LocalPrefs.txt`. `system32/SAAPI64.log` that day: "S Kurast Docks. Waypoint", "S Bottom action button", "S Interact".
+Steam's launch options for the game carry `CX_GRAPHICS_BACKEND=d3dmetal WINEMSYNC=1 %command%`.
+
+**Diablo 4 Assist (d4-assist, by Ali-Bueno; 7 November 2026, not yet verified in play):** installed into the
+prefix at `C:\D4Assist`, started by `start-d4assist.sh --wait` from the game's launch options (it must start after
+the game: NotProton runs `wineserver -k` while it sets the game up). Two Wine workarounds: `--restarted`, because
+under msync its zero-timeout single-instance mutex wait always fails; and `--no-speech` with `speech-relay.exe`
+(mingw-built, source beside it) tailing `d4assist-log.txt` and sending `X` / `S <text>` to TurnOver's port, because
+its Prism picks NVDA under Wine and stays silent. The relay must be a Wine process: TurnOver speaks for a Wine
+speaker while a game is in front, not for a Mac one.

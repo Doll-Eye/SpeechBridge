@@ -15,8 +15,9 @@
 # registration (regsvr32, from inside the bottle) is a one-off and is checked here, not done —
 # see README, "SapiBridge".
 #
-# Usage:  SpeechBridge/install.sh [bottle-name]      default bottle: Steam
-#         SpeechBridge/install.sh --uninstall [bottle-name]   put every .orig back
+# Usage:  sh SpeechBridge/install.sh [bottle-name]      default bottle: Steam
+#         sh SpeechBridge/install.sh --uninstall [bottle-name]   put every .orig back
+# Most people run SpeechBridge/setup.sh instead, which runs this and does the rest (the apps, the registrations).
 set -e
 cd "$(dirname "$0")"
 HERE="$(pwd)"
@@ -28,14 +29,12 @@ B="$HOME/Library/Application Support/CrossOver/Bottles/$BOTTLE"
 [ -d "$B/drive_c" ] || { echo "No bottle at $B"; exit 1; }
 COMMON="$B/drive_c/Program Files (x86)/Steam/steamapps/common"
 
-# 32- or 64-bit? PE magic 0x20b at the optional header.
+# 32- or 64-bit? PE magic 0x20b (523) at the optional header. od alone, so a Mac without Apple's
+# Command Line Tools (whose python3 is only a prompt to install them) can run this.
 bits_of() {
-    python3 - "$1" <<'EOF'
-import struct, sys
-d = open(sys.argv[1], 'rb').read(0x200)
-pe = struct.unpack_from('<I', d, 0x3c)[0]
-print(64 if struct.unpack_from('<H', d, pe + 24)[0] == 0x20b else 32)
-EOF
+    pe=$(od -An -tu4 -j60 -N4 "$1" | tr -d ' ')
+    magic=$(od -An -tu2 -j"$((pe + 24))" -N2 "$1" | tr -d ' ')
+    if [ "$magic" = 523 ]; then echo 64; else echo 32; fi
 }
 
 is_ours() {   # our DLLs carry this string; the games' do not (grep alone stops at binaries' NULs)
@@ -209,8 +208,12 @@ fi
 mkdir -p "$HOME/Library/Application Support/SpeechBridge"; cp "$HERE/tools/name-stubs.sh" "$HOME/Library/Application Support/SpeechBridge/name-stubs.sh"
 sh "$HERE/tools/name-stubs.sh" "$BOTTLE"
 
-if pgrep -x "SpeechBridge Listener" >/dev/null; then
-    echo "Listener: running."
+# Who hears the games: TurnOver's speech port (127.0.0.1:52134, since October 2026), or without TurnOver the old
+# SpeechBridge Listener. Both at once can't be: whichever starts second finds the port taken.
+if lsof -nP -iTCP:52134 -sTCP:LISTEN 2>/dev/null | grep -q turnover; then
+    echo "TurnOver is listening for game speech (port 52134). A game asks to speak through it the first time; answer Allow."
+elif pgrep -x "SpeechBridge Listener" >/dev/null; then
+    echo "The old SpeechBridge Listener holds port 52134 (speech goes to VoiceOver). With TurnOver installed, retire it: sh listener/login-item.sh --remove."
 else
-    echo "Listener: not running — open '/Applications/SpeechBridge Listener.app' (listener/build.sh installs it and listener/login-item.sh keeps it running)."
+    echo "Nothing is listening on port 52134: start TurnOver (or, without TurnOver, build the listener: sh listener/build.sh)."
 fi
